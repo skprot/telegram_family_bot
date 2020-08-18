@@ -65,5 +65,6 @@ class GooglePhotoService:
             print('Trying again!')
             self._download(download_url, download_folder, file_name)
 
-a = GooglePhotoService()
-a.download_random_photo()
+
+#a = GooglePhotoService()
+#a.download_random_photo()
