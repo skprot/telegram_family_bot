@@ -5,3 +5,4 @@ __pycache__
 client_secret_photobot.json
 media_ids.pkl
 token_photoslibrary_v1.pickle
+photosAPI/token_photoslibrary_v1.pickle
