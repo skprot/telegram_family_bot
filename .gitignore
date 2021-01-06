@@ -2,7 +2,7 @@
 .idea/
 __pycache__
 downloads/*git
+downloads/*.jpg
 
 *.pkl
 *.pickle
-
