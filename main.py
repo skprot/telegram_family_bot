@@ -53,6 +53,3 @@ def set_hours(msg):
 
 if __name__ == '__main__':
     bot.polling()
-
-
-
