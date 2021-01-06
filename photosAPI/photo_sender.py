@@ -1,7 +1,9 @@
 import time
 import sys
+import os
 
 import logging
+
 logger = logging.getLogger('TeleBot')
 formatter = logging.Formatter(
     '%(asctime)s (%(filename)s:%(lineno)d %(threadName)s) %(levelname)s - %(name)s: "%(message)s"'
@@ -19,41 +21,76 @@ from photosAPI.photo_grabber import GooglePhotoService
 
 
 class PhotoSender(TeleBot):
-    def __init__(self, token):
-        super().__init__(token=token)
+    def __init__(self, token, parse_mode=None, threaded=True, skip_pending=False, num_threads=2,
+                 next_step_backend=None, reply_backend=None):
+        super().__init__(token=token, parse_mode=parse_mode, threaded=threaded,
+                         skip_pending=skip_pending, num_threads=num_threads,
+                         next_step_backend=next_step_backend, reply_backend=reply_backend)
         self.media = GooglePhotoService()
         self.time = datetime.utcnow()
         self.schedule = self.set_default_hours()
-        self.past_hour = -1
-        self.chat_id = -1
+        self.user_schedule = {}
+        self.past_hour = {}
+        self.chat_id = []
+        self.ping_minute = -1
 
     @staticmethod
     def set_default_hours():
         return [1, 12]
 
-    def set_new_hours(self, hours):
+    def ping(self):
+        self.time = datetime.utcnow()
+        if (self.time.minute % 15 == 0) and (self.time.minute != self.ping_minute):
+            self.ping_minute = self.time.minute
+            response = os.system("ping -c 1 google.com")
+            if response == 0:
+                print("ping OK")
+            else:
+                print("ping NOT OK")
+
+    def set_default_user_schedule(self, chat_id):
+        if chat_id not in self.user_schedule:
+            self.user_schedule[chat_id] = self.set_default_hours()
+            self.past_hour[chat_id] = -1
+        else:
+            self.user_schedule.update({chat_id: self.set_default_hours()})
+            self.past_hour.update({chat_id: -1})
+
+    def set_new_user_schedule(self, chat_id, schedule):
         utc_irk = -8
 
-        for i in range(len(hours)):
-            hours[i] += utc_irk
+        for i in range(len(schedule)):
+            if schedule[i] > 7:
+                schedule[i] += utc_irk
+            else:
+                schedule[i] += utc_irk + 24
 
-        self.schedule = hours
+        if chat_id not in self.user_schedule:
+            self.user_schedule[chat_id] = schedule
+        else:
+            self.user_schedule.update({chat_id: schedule})
 
     def set_chat_id(self):
         try:
-            self.chat_id = self.get_updates()[0].message.chat.id
+            for i in range(len(self.get_updates())):
+                if self.get_updates()[i].message.chat.id not in self.chat_id:
+                    new_id = self.get_updates()[i].message.chat.id
+                    self.chat_id.append(new_id)
+                    self.set_default_user_schedule(new_id)
         except IndexError:
             return False
 
     def send_scheduled_photo(self):
-        if (self.time.hour in self.schedule) and (self.time.hour != self.past_hour):
-            self.send_my_photo()
-            self.past_hour = self.time.hour
+        self.time = datetime.utcnow()
+        for _id, schedule in self.user_schedule.items():
+            if (self.time.hour in schedule) and (self.time.hour != self.past_hour[_id]):
+                self.send_my_photo(_id)
+                self.past_hour[_id] = self.time.hour
 
-    def send_my_photo(self):
+    def send_my_photo(self, chat_id):
         self.media.download_random_photo()
         img = open('downloads/photo.jpg', 'rb')
-        self.send_photo(self.chat_id, img, caption='It is time for photos!')
+        self.send_photo(chat_id, img, caption='It is time for photos!')
 
     def polling(self, none_stop=False, interval=0, timeout=20):
         """
@@ -106,9 +143,9 @@ class PhotoSender(TeleBot):
                 self._TeleBot__stop_polling.set()
                 break
 
-            if self.chat_id == -1:
-                self.set_chat_id()
-            else:
+            self.ping()
+            self.set_chat_id()
+            if len(self.user_schedule) > 0:
                 self.send_scheduled_photo()
 
         polling_thread.stop()
@@ -141,7 +178,8 @@ class PhotoSender(TeleBot):
                 self._TeleBot__stop_polling.set()
                 break
 
-            if self.chat_id == -1:
+            self.ping()
+            if self.chat_id[0] == -1:
                 self.set_chat_id()
             else:
                 self.send_scheduled_photo()

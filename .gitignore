@@ -6,3 +6,4 @@ downloads/photo.jpg
 
 *.pkl
 *.pickle
+*.json

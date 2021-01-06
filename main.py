@@ -1,6 +1,6 @@
 from photosAPI import photo_sender
 
-token = '<TOKEN>'
+token = '836723555:AAEGQibwtvDFy4jNK3v9SaYyebIXxJowBj0'
 bot = photo_sender.PhotoSender(token)
 
 
@@ -17,12 +17,17 @@ def hello(msg):
 
 @bot.message_handler(commands=["send_photo"])
 def photo(msg):
-    bot.send_my_photo()
+    bot.send_my_photo(msg.chat.id)
 
 
 @bot.message_handler(commands=["get_insides"])
 def info(msg):
-    bot.send_message(msg.chat.id, f"chat_id: {bot.chat_id} \n schedule: {bot.schedule}")
+    bot.send_message(msg.chat.id, f"time: {bot.time}, chat_id: {bot.user_schedule}, len: {len(bot.get_updates())} ")
+
+
+@bot.message_handler(commands=["get_schedule"])
+def info(msg):
+    bot.send_message(msg.chat.id, f"Schedule: {bot.user_schedule[msg.chat.id]} UTC (Irkutsk +8)")
 
 
 @bot.message_handler(commands=["set_hours"], content_types=['text'])
@@ -48,8 +53,13 @@ def set_hours(msg):
 
     bot.send_message(msg.chat.id, f"Hello! You have changed the schedule "
                                   f"of this bot on {hours} hours by Irkutsk time")
-    bot.set_new_hours(hours)
+
+    bot.set_new_user_schedule(msg.chat.id, hours)
 
 
 if __name__ == '__main__':
-    bot.polling()
+    while True:
+        try:
+            bot.polling(none_stop=True)
+        except:
+            pass
