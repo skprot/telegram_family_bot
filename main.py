@@ -1,6 +1,6 @@
 from photosAPI import photo_sender
 
-token = '<TOKEN>'
+token = '836723555:AAEGQibwtvDFy4jNK3v9SaYyebIXxJowBj0'
 bot = photo_sender.PhotoSender(token)
 
 

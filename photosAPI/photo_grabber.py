@@ -82,4 +82,9 @@ class GooglePhotoService:
         download_folder = r'downloads'
         file_name = media_id['filename']
 
+        try:
+            os.mkdir(download_folder)
+        except OSError:
+            pass
+
         self._download(download_url, download_folder, file_name)
