@@ -59,8 +59,6 @@ def set_hours(msg):
 
 
 if __name__ == '__main__':
-    print('hello!')
-    time.sleep(60)
     while True:
         try:
             bot.polling(none_stop=True)
