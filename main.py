@@ -1,6 +1,7 @@
+import time
 from photosAPI import photo_sender
 
-token = '836723555:AAEGQibwtvDFy4jNK3v9SaYyebIXxJowBj0'
+token = '1340530526:AAHlgpv0YS3g_tF-KoHO6M9NoMjsP2UDP_c'
 bot = photo_sender.PhotoSender(token)
 
 
@@ -58,6 +59,7 @@ def set_hours(msg):
 
 
 if __name__ == '__main__':
+    time.sleep(60)
     while True:
         try:
             bot.polling(none_stop=True)
