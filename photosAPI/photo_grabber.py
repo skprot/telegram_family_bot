@@ -9,7 +9,7 @@ class GooglePhotoService:
     def __init__(self):
         self.API_NAME = 'photoslibrary'
         self.API_VERSION = 'v1'
-        self.CLIENT_SECRET_FILE = 'client_secret_photobot_old.json'
+        self.CLIENT_SECRET_FILE = 'client_secret_photobot_new.json'
         self.SCOPES = ['https://www.googleapis.com/auth/photoslibrary',
                        'https://www.googleapis.com/auth/photoslibrary.sharing']
 
