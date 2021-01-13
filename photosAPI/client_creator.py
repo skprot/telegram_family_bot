@@ -26,7 +26,7 @@ def create_service(client_secret_file, api_name, api_version, *scopes):
         if cred and cred.expired and cred.refresh_token:
             cred.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES, redirect_uri='178.184.5.165')
+            flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES, redirect_uri='https://178.184.5.165')
             cred = flow.run_local_server()
             #print('waiting ps:exec')
             #time.sleep(20)
