@@ -1,1 +1,1 @@
-web: echo "a"
+web: cd ~
