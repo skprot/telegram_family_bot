@@ -29,7 +29,7 @@ def create_service(client_secret_file, api_name, api_version, *scopes):
             flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
             #cred = flow.run_local_server()
             print('waiting ps:exec')
-            time.sleep(60)
+            time.sleep(20)
             cred = flow.run_console()
 
         with open(pickle_file, 'wb') as token:
