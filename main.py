@@ -1,7 +1,7 @@
 import time
 from photosAPI import photo_sender
 
-token = '1340530526:AAHlgpv0YS3g_tF-KoHO6M9NoMjsP2UDP_c'
+token = '<TOKEN>'
 bot = photo_sender.PhotoSender(token)
 
 
